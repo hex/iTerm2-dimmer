@@ -1,12 +1,13 @@
-# ABOUTME: Shared data and functions for iTerm2 TASKMASTER dimming triggers.
-# ABOUTME: Used by dimmer.py, toggle_taskmaster_dim.py, and AutoLaunch/taskmaster_dim.py.
+# ABOUTME: Shared data and functions for iTerm2 dimming triggers.
+# ABOUTME: Phrase lists, dim color computation, and trigger install/remove for all dimmers.
 
 import iterm2
 
 
-# Phrases from the TASKMASTER stop hook, chosen to be short enough to survive
-# line-wrapping and specific enough to avoid false positives.
+# Phrases chosen to be short enough to survive line-wrapping and specific
+# enough to avoid false positives.
 PHRASES = [
+    # TASKMASTER stop hook
     "TASKMASTER",
     "Incomplete tasks or recent",
     "detected in the session",
@@ -63,6 +64,17 @@ PHRASES = [
     "partially done",
     "Finish it",
     "user redirected",
+    # claude-sessions discoveries hook
+    "Stop hook error",
+    "Discoveries check",
+    "Review existing entries",
+    "disproven or superseded",
+    "correct or remove them now",
+    "new findings to add",
+    "run_in_background to append",
+    "just acknowledge and continue",
+    "Archive has grown",
+    "compact discoveries",
 ]
 
 REGEX_PATTERNS = [

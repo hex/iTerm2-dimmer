@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# ABOUTME: Dims TASKMASTER stop hook output in iTerm2 via HighlightLine triggers.
+# ABOUTME: Dims noisy output in iTerm2 via HighlightLine triggers.
 # ABOUTME: Supports --once (apply), --off (remove), or daemon mode (watch new sessions).
 
 import sys
 import iterm2
 
-from taskmaster_triggers import apply_to_session, remove_from_session
+from triggers import apply_to_session, remove_from_session
 
 
 async def main(connection):

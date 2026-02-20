@@ -21,7 +21,7 @@ echo "Building Taskmaster.its..."
 STAGE="$BUILD_DIR/Taskmaster"
 mkdir -p "$STAGE"
 strip_sys_path "$SRC_DIR/scripts/taskmaster_dim.py" > "$STAGE/Taskmaster.py"
-cp "$SRC_DIR/taskmaster_triggers.py" "$STAGE/"
+cp "$SRC_DIR/triggers.py" "$STAGE/"
 (cd "$BUILD_DIR" && zip -qr "$REPO_DIR/Taskmaster.its" Taskmaster/)
 echo "  Created Taskmaster.its"
 
@@ -30,7 +30,7 @@ echo "Building Toggle Taskmaster.its..."
 STAGE="$BUILD_DIR/Toggle Taskmaster"
 mkdir -p "$STAGE"
 strip_sys_path "$SRC_DIR/scripts/toggle_taskmaster_dim.py" > "$STAGE/Toggle Taskmaster.py"
-cp "$SRC_DIR/taskmaster_triggers.py" "$STAGE/"
+cp "$SRC_DIR/triggers.py" "$STAGE/"
 (cd "$BUILD_DIR" && zip -qr "$REPO_DIR/Toggle Taskmaster.its" "Toggle Taskmaster/")
 echo "  Created Toggle Taskmaster.its"
 

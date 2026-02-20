@@ -49,7 +49,7 @@ else
 fi
 
 # Symlink core files to ~/.config/iTerm2-dimmer/
-for f in taskmaster_triggers.py dimmer.py run.sh; do
+for f in triggers.py dimmer.py run.sh; do
     target="$CONFIG_DIR/$f"
     if [ -e "$target" ] && [ ! -L "$target" ]; then
         echo "  Backing up existing $target to $target.bak"
@@ -60,7 +60,7 @@ for f in taskmaster_triggers.py dimmer.py run.sh; do
 done
 
 # Remove old-style symlinks from previous installs
-for old in "$SCRIPTS_DIR/toggle_taskmaster_dim.py" "$AUTOLAUNCH_DIR/taskmaster_dim.py"; do
+for old in "$SCRIPTS_DIR/toggle_taskmaster_dim.py" "$AUTOLAUNCH_DIR/taskmaster_dim.py" "$CONFIG_DIR/taskmaster_triggers.py"; do
     if [ -L "$old" ]; then
         rm "$old"
         echo "  Removed old symlink: $old"

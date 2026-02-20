@@ -59,7 +59,7 @@ brew untap hex/tap
 
 ## Configuration
 
-Edit `src/taskmaster_triggers.py` to adjust:
+Edit `src/triggers.py` to adjust:
 
 - **`DIM_FACTOR`** (default `0.25`) -- how visible the dimmed text is. `0.0` = invisible, `1.0` = full brightness.
 - **`PHRASES`** -- the list of text fragments to match. Add your own phrases to dim other noisy output. Short, wrap-resistant fragments work best.

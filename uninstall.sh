@@ -17,7 +17,7 @@ if [ -x "$CONFIG_DIR/run.sh" ]; then
 fi
 
 # Remove symlinks (only if they are symlinks, not regular files)
-for f in taskmaster_triggers.py dimmer.py run.sh; do
+for f in triggers.py dimmer.py run.sh; do
     target="$CONFIG_DIR/$f"
     if [ -L "$target" ]; then
         rm "$target"
@@ -25,12 +25,13 @@ for f in taskmaster_triggers.py dimmer.py run.sh; do
     fi
 done
 
-# Remove current symlinks
+# Remove current and old-style symlinks
 for target in \
     "$SUBMENU_DIR/Toggle Taskmaster.py" \
     "$AUTOLAUNCH_DIR/Taskmaster.py" \
     "$SCRIPTS_DIR/toggle_taskmaster_dim.py" \
-    "$AUTOLAUNCH_DIR/taskmaster_dim.py"; do
+    "$AUTOLAUNCH_DIR/taskmaster_dim.py" \
+    "$CONFIG_DIR/taskmaster_triggers.py"; do
     if [ -L "$target" ]; then
         rm "$target"
         echo "  Removed $target"

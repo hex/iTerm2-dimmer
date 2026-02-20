@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ABOUTME: Auto-dims TASKMASTER stop hook output via phrase-based HighlightLine triggers.
+# ABOUTME: Auto-dims noisy output via phrase-based HighlightLine triggers.
 # ABOUTME: Watches for new sessions, profile changes, and theme changes to keep dim colors current.
 
 import sys
@@ -9,7 +9,7 @@ import asyncio
 sys.path.insert(0, os.path.expanduser("~/.config/iTerm2-dimmer"))
 
 import iterm2
-from taskmaster_triggers import apply_to_session
+from triggers import apply_to_session
 
 
 async def watch_profile(connection, session):
