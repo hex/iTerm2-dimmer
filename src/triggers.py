@@ -1,6 +1,8 @@
 # ABOUTME: Shared data and functions for iTerm2 dimming triggers.
 # ABOUTME: Per-dimmer phrase lists, dim color computation, and trigger install/remove.
 
+import re
+
 import iterm2
 
 
@@ -72,27 +74,26 @@ DIMMERS = {
     },
     "claude-sessions": {
         "phrases": [
-            "Stop hook error",
-            "Discoveries check",
-            "Review existing entries",
-            "disproven or superseded",
-            "correct or remove them now",
-            "new findings to add",
-            "run_in_background to append",
-            "just acknowledge and continue",
-            "Archive has grown",
-            "compact discoveries",
+            "Discoveries check: (1) Review existing entries in",
+            "disproven or superseded by your recent work",
+            "correct or remove them now. (2)",
+            "new findings to add, use the Task tool",
+            "nothing to change, just acknowledge and continue",
+            "compact discoveries (follow the",
         ],
-        "regex_patterns": [],
+        "regex_patterns": [
+            r"Archive has grown \(\d+ lines\)",
+        ],
         "dim_toward": (255, 160, 0),  # orange
     },
 }
 
 
 def make_null_safe(phrase):
-    """Convert spaces to [\\x00 ] so triggers match both real spaces and
-    null bytes (Claude Code's TUI uses \\x00 as padding in rendered text)."""
-    return phrase.replace(" ", "[\\x00 ]")
+    """Escape regex metacharacters then convert spaces to [\\x00 ] so triggers
+    match both real spaces and null bytes (Claude Code's TUI uses \\x00 as
+    padding in rendered text)."""
+    return re.escape(phrase).replace(r"\ ", "[\\x00 ]")
 
 
 def _tail_phrases(phrases, min_len=10):
