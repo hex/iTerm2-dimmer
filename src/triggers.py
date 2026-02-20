@@ -84,7 +84,6 @@ DIMMERS = {
         "regex_patterns": [
             r"Archive has grown \(\d+ lines\)",
         ],
-        "dim_toward": (255, 160, 0),  # orange
     },
 }
 
@@ -125,26 +124,15 @@ def build_trigger_regex(dimmer_name):
 # Pre-built per-dimmer regexes (one trigger per dimmer).
 DIMMER_REGEXES = {name: build_trigger_regex(name) for name in DIMMERS}
 
-# For removal, match per-dimmer regexes AND individual patterns AND the old
-# combined regex from previous versions, so upgrades clean up stale triggers.
-_all_phrases = []
-for config in DIMMERS.values():
-    phrases = config["phrases"]
-    _all_phrases.extend(phrases)
-    _all_phrases.extend(_tail_phrases(phrases))
+_DIM_PARAM_RE = re.compile(r'^\{#[0-9a-f]{6},\}$')
 
-_OLD_COMBINED_REGEX = "|".join(
-    [make_null_safe(p) for p in _all_phrases]
-    + [p for c in DIMMERS.values() for p in c["regex_patterns"]]
-)
 
-ALL_PATTERNS = (
-    {make_null_safe(p) for p in _all_phrases}
-    | set(_all_phrases)
-    | {p for c in DIMMERS.values() for p in c["regex_patterns"]}
-    | set(DIMMER_REGEXES.values())
-    | {_OLD_COMBINED_REGEX}
-)
+def _is_dim_trigger(trigger):
+    """Check if a trigger was installed by iTerm2-dimmer. Identifies by action
+    type + parameter format rather than regex content, so stale triggers from
+    any version are always caught."""
+    return (trigger.get("action") == "iTermHighlightLineTrigger"
+            and _DIM_PARAM_RE.match(trigger.get("parameter", "")))
 
 # How far from background toward foreground (0.0 = invisible, 1.0 = full brightness).
 DIM_FACTOR = 0.25
@@ -179,6 +167,8 @@ def compute_dim_param(profile, dim_toward=None):
 
 def has_dimmer(profile, dimmer_name):
     """Check whether a specific dimmer's trigger is installed."""
+    if dimmer_name not in DIMMER_REGEXES:
+        return False
     regex = DIMMER_REGEXES[dimmer_name]
     for t in (profile.triggers or []):
         if t.get("regex") == regex:
@@ -188,13 +178,15 @@ def has_dimmer(profile, dimmer_name):
 
 async def apply_dimmer(session, dimmer_name):
     """Install one dimmer's trigger, replacing any stale triggers."""
+    if dimmer_name not in DIMMERS:
+        return
     profile = await session.async_get_profile()
     dim_toward = DIMMERS[dimmer_name].get("dim_toward")
     dim_param = compute_dim_param(profile, dim_toward)
     regex = DIMMER_REGEXES[dimmer_name]
 
     # Remove stale triggers but keep other dimmers' triggers and user triggers
-    kept = [t for t in (profile.triggers or []) if t.get("regex") not in ALL_PATTERNS
+    kept = [t for t in (profile.triggers or []) if not _is_dim_trigger(t)
             or (t.get("regex") in DIMMER_REGEXES.values()
                 and t.get("regex") != regex)]
     new_trigger = {
@@ -212,6 +204,8 @@ async def apply_dimmer(session, dimmer_name):
 
 async def remove_dimmer(session, dimmer_name):
     """Remove one dimmer's trigger from a session."""
+    if dimmer_name not in DIMMER_REGEXES:
+        return
     profile = await session.async_get_profile()
     regex = DIMMER_REGEXES[dimmer_name]
     existing = profile.triggers or []
@@ -228,7 +222,7 @@ async def remove_dimmer(session, dimmer_name):
 def has_dim_triggers(profile):
     """Check whether any dimmer trigger is installed."""
     for t in (profile.triggers or []):
-        if t.get("regex") in ALL_PATTERNS:
+        if _is_dim_trigger(t):
             return True
     return False
 
@@ -239,7 +233,7 @@ async def apply_to_session(session):
     profile = await session.async_get_profile()
     existing = profile.triggers or []
 
-    kept = [t for t in existing if t.get("regex") not in ALL_PATTERNS]
+    kept = [t for t in existing if not _is_dim_trigger(t)]
     new_triggers = [{
         "regex": DIMMER_REGEXES[name],
         "action": "iTermHighlightLineTrigger",
@@ -259,7 +253,7 @@ async def remove_from_session(session):
     Returns the number of triggers removed."""
     profile = await session.async_get_profile()
     existing = profile.triggers or []
-    kept = [t for t in existing if t.get("regex") not in ALL_PATTERNS]
+    kept = [t for t in existing if not _is_dim_trigger(t)]
     removed = len(existing) - len(kept)
 
     wp = iterm2.LocalWriteOnlyProfile()

@@ -64,7 +64,7 @@ brew untap hex/tap
 Edit `src/triggers.py` to adjust:
 
 - **`DIM_FACTOR`** (default `0.25`) -- how visible the dimmed text is. `0.0` = invisible, `1.0` = full brightness.
-- **`DIMMERS`** -- a dict of dimmer configs, each with its own `phrases` list, `regex_patterns`, and optional `dim_toward` color. Add a new entry to dim other noisy output, or edit existing entries. Short, wrap-resistant fragments work best.
+- **`DIMMERS`** -- a dict of dimmer configs, each with its own `phrases` list and `regex_patterns`. Add a new entry to dim other noisy output, or edit existing entries. Short, wrap-resistant fragments work best.
 
 After editing, run `run.sh off && run.sh on` (or restart iTerm2) to reapply.
 
@@ -76,7 +76,7 @@ After editing, run `run.sh off && run.sh on` (or restart iTerm2) to reapply.
 
 ## How it works
 
-Each dimmer's phrases are converted to null-safe regexes (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and combined into one iTerm2 HighlightLine trigger per dimmer using `|` alternation. The trigger's text color is interpolated between the session's background color and a target color at `DIM_FACTOR`. By default the target is the foreground color (making text blend into the background). Dimmers can override this with `dim_toward` to use a tinted dim color instead (e.g., claude-sessions dims toward orange).
+Each dimmer's phrases are converted to null-safe regexes (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and combined into one iTerm2 HighlightLine trigger per dimmer using `|` alternation. The trigger's text color is interpolated between the session's background and foreground colors at `DIM_FACTOR`, making the text blend into the background.
 
 Longer phrases (3+ words) automatically generate shorter sub-phrases to handle line-wrapping. For example, `"no longer wanted"` also generates `"longer wanted"` so the text stays dimmed even if it wraps mid-phrase.
 
