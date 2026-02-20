@@ -34,5 +34,14 @@ cp "$SRC_DIR/triggers.py" "$STAGE/"
 (cd "$BUILD_DIR" && zip -qr "$REPO_DIR/Toggle Taskmaster.its" "Toggle Taskmaster/")
 echo "  Created Toggle Taskmaster.its"
 
+# Build claude-sessions toggle .its
+echo "Building Toggle claude-sessions.its..."
+STAGE="$BUILD_DIR/Toggle claude-sessions"
+mkdir -p "$STAGE"
+strip_sys_path "$SRC_DIR/scripts/toggle_claude_sessions_dim.py" > "$STAGE/Toggle claude-sessions.py"
+cp "$SRC_DIR/triggers.py" "$STAGE/"
+(cd "$BUILD_DIR" && zip -qr "$REPO_DIR/Toggle claude-sessions.its" "Toggle claude-sessions/")
+echo "  Created Toggle claude-sessions.its"
+
 rm -rf "$BUILD_DIR"
 echo "Done."

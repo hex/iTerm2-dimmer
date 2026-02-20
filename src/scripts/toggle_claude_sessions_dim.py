@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ABOUTME: Toggles taskmaster dimming on/off across all iTerm2 sessions.
+# ABOUTME: Toggles claude-sessions dimming on/off across all iTerm2 sessions.
 # ABOUTME: Appears in iTerm2's Scripts menu as a clickable toggle.
 
 import sys
@@ -16,7 +16,7 @@ async def main(connection):
 
     session = app.current_terminal_window.current_tab.current_session
     profile = await session.async_get_profile()
-    currently_on = has_dimmer(profile, "taskmaster")
+    currently_on = has_dimmer(profile, "claude-sessions")
 
     count = 0
     for window in app.terminal_windows:
@@ -24,15 +24,15 @@ async def main(connection):
             for s in tab.sessions:
                 try:
                     if currently_on:
-                        await remove_dimmer(s, "taskmaster")
+                        await remove_dimmer(s, "claude-sessions")
                     else:
-                        await apply_dimmer(s, "taskmaster")
+                        await apply_dimmer(s, "claude-sessions")
                     count += 1
                 except Exception:
                     pass
 
     state = "OFF" if currently_on else "ON"
-    alert = iterm2.Alert("Taskmaster Dimmer", f"Dimming turned {state} ({count} sessions)")
+    alert = iterm2.Alert("claude-sessions Dimmer", f"Dimming turned {state} ({count} sessions)")
     await alert.async_run(connection)
 
 

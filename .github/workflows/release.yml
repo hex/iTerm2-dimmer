@@ -29,3 +29,4 @@ jobs:
           files: |
             Taskmaster.its
             Toggle Taskmaster.its
+            Toggle claude-sessions.its

@@ -14,9 +14,9 @@ iTerm2-dimmer makes matched output nearly invisible by coloring it close to your
 
 ## Components
 
-- **AutoLaunch daemon** -- starts with iTerm2, applies triggers to all sessions, watches for new sessions, profile changes, and OS theme changes
-- **Toggle script** -- appears in iTerm2's Scripts > iTerm2 Dimmer menu, toggles dimming on/off with a confirmation alert
-- **CLI tool** -- `run.sh on|off|daemon` for scripted control
+- **AutoLaunch daemon** -- starts with iTerm2, applies all dimmer triggers to all sessions, watches for new sessions, profile changes, and OS theme changes
+- **Toggle scripts** -- per-dimmer toggles in iTerm2's Scripts > iTerm2 Dimmer menu (Toggle Taskmaster, Toggle claude-sessions), each toggling its dimmer independently
+- **CLI tool** -- `run.sh on|off|daemon` for scripted control (applies/removes all dimmers at once)
 
 ![Scripts menu location](assets/menu.png)
 
@@ -40,7 +40,7 @@ iTerm2-dimmer install
 
 ### iTerm2 Script Import
 
-Download `Taskmaster.its` and/or `Toggle Taskmaster.its` from the [releases page](https://github.com/hex/iTerm2-dimmer/releases), then import via iTerm2 > Scripts > Import.
+Download `Taskmaster.its`, `Toggle Taskmaster.its`, and/or `Toggle claude-sessions.its` from the [releases page](https://github.com/hex/iTerm2-dimmer/releases), then import via iTerm2 > Scripts > Import.
 
 Note: `.its` imports only install the iTerm2 scripts. For the CLI tool, use one of the other install methods.
 
@@ -64,7 +64,7 @@ brew untap hex/tap
 Edit `src/triggers.py` to adjust:
 
 - **`DIM_FACTOR`** (default `0.25`) -- how visible the dimmed text is. `0.0` = invisible, `1.0` = full brightness.
-- **`PHRASES`** -- the list of text fragments to match. Add your own phrases to dim other noisy output. Short, wrap-resistant fragments work best.
+- **`DIMMERS`** -- a dict of dimmer configs, each with its own `phrases` list and `regex_patterns`. Add a new entry to dim other noisy output, or edit existing entries. Short, wrap-resistant fragments work best.
 
 After editing, run `run.sh off && run.sh on` (or restart iTerm2) to reapply.
 
@@ -76,7 +76,7 @@ After editing, run `run.sh off && run.sh on` (or restart iTerm2) to reapply.
 
 ## How it works
 
-Each phrase in `PHRASES` is converted to a null-safe regex (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and combined into a single iTerm2 HighlightLine trigger using `|` alternation. The trigger's text color is interpolated between the session's background and foreground colors at `DIM_FACTOR`, making the text blend into the background.
+Each dimmer's phrases are converted to null-safe regexes (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and combined into one iTerm2 HighlightLine trigger per dimmer using `|` alternation. The trigger's text color is interpolated between the session's background and foreground colors at `DIM_FACTOR`, making the text blend into the background.
 
 Longer phrases (3+ words) automatically generate shorter sub-phrases to handle line-wrapping. For example, `"no longer wanted"` also generates `"longer wanted"` so the text stays dimmed even if it wraps mid-phrase.
 

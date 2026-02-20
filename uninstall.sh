@@ -28,6 +28,7 @@ done
 # Remove current and old-style symlinks
 for target in \
     "$SUBMENU_DIR/Toggle Taskmaster.py" \
+    "$SUBMENU_DIR/Toggle claude-sessions.py" \
     "$AUTOLAUNCH_DIR/Taskmaster.py" \
     "$SCRIPTS_DIR/toggle_taskmaster_dim.py" \
     "$AUTOLAUNCH_DIR/taskmaster_dim.py" \

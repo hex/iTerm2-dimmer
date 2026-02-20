@@ -75,6 +75,13 @@ fi
 ln -sf "$SRC_DIR/scripts/toggle_taskmaster_dim.py" "$target"
 echo "  Linked Toggle Taskmaster.py -> $target"
 
+target="$SUBMENU_DIR/Toggle claude-sessions.py"
+if [ -e "$target" ] && [ ! -L "$target" ]; then
+    mv "$target" "$target.bak"
+fi
+ln -sf "$SRC_DIR/scripts/toggle_claude_sessions_dim.py" "$target"
+echo "  Linked Toggle claude-sessions.py -> $target"
+
 target="$AUTOLAUNCH_DIR/Taskmaster.py"
 if [ -e "$target" ] && [ ! -L "$target" ]; then
     mv "$target" "$target.bak"
