@@ -72,9 +72,17 @@ After editing, run `run.sh off && run.sh on` (or restart iTerm2) to reapply.
 
 ## How it works
 
-Each phrase in `PHRASES` is converted to a null-safe regex (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and installed as an iTerm2 HighlightLine trigger. The trigger's text color is interpolated between the session's background and foreground colors at `DIM_FACTOR`, making the text blend into the background.
+Each phrase in `PHRASES` is converted to a null-safe regex (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and combined into a single iTerm2 HighlightLine trigger using `|` alternation. The trigger's text color is interpolated between the session's background and foreground colors at `DIM_FACTOR`, making the text blend into the background.
+
+Longer phrases (3+ words) automatically generate shorter sub-phrases to handle line-wrapping. For example, `"no longer wanted"` also generates `"longer wanted"` so the text stays dimmed even if it wraps mid-phrase.
 
 The AutoLaunch daemon monitors three things concurrently:
 - **New sessions** -- applies triggers immediately
 - **Profile changes** -- recomputes the dim color when a session's profile changes (e.g., switching from a dark to light profile)
 - **Theme changes** -- recomputes all sessions' dim colors when macOS dark/light mode toggles
+
+## Limitations
+
+iTerm2 triggers match per screen line (after text wrapping), not per logical line. When the terminal window is resized, text reflows and a phrase like `"ACTUALLY DO IT"` can split so that `"IT."` lands on its own screen line with no matching trigger.
+
+The sub-phrase generator covers most wrap points, but very short orphan fragments (1-2 words) at narrow window widths may remain undimmed. This is an inherent limitation of iTerm2's trigger system, which has no "dim this block" mechanism.
