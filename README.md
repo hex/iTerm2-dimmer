@@ -6,14 +6,14 @@ Dims [TASKMASTER](https://github.com/blader/taskmaster) stop hook output in iTer
 
 ## What it does
 
-TASKMASTER's stop hook prints a multi-line checklist every time a Claude Code agent tries to stop. This is useful for the agent but noisy for humans. iterm2-dimmer makes that output nearly invisible by coloring it close to your terminal's background color.
+TASKMASTER's stop hook prints a multi-line checklist every time a Claude Code agent tries to stop. This is useful for the agent but noisy for humans. iTerm2-dimmer makes that output nearly invisible by coloring it close to your terminal's background color.
 
 The dimmer installs iTerm2 triggers (HighlightLine rules) on each session that match short phrases from the stop hook output. Triggers are session-local and don't modify your saved profiles.
 
 ## Components
 
 - **AutoLaunch daemon** -- starts with iTerm2, applies triggers to all sessions, watches for new sessions, profile changes, and OS theme changes
-- **Toggle script** -- appears in iTerm2's Scripts menu, toggles dimming on/off with a confirmation alert
+- **Toggle script** -- appears in iTerm2's Scripts > iTerm2 Dimmer menu, toggles dimming on/off with a confirmation alert
 - **CLI tool** -- `run.sh on|off|daemon` for scripted control
 
 ## Install
@@ -21,8 +21,8 @@ The dimmer installs iTerm2 triggers (HighlightLine rules) on each session that m
 ### From source (recommended)
 
 ```bash
-git clone https://github.com/hex/iterm2-dimmer.git ~/GitHub/iterm2-dimmer
-cd ~/GitHub/iterm2-dimmer
+git clone https://github.com/hex/iTerm2-dimmer.git ~/GitHub/iTerm2-dimmer
+cd ~/GitHub/iTerm2-dimmer
 ./install.sh
 ```
 
@@ -30,28 +30,28 @@ cd ~/GitHub/iterm2-dimmer
 
 ```bash
 brew tap hex/tap
-brew install iterm2-dimmer
-iterm2-dimmer install
+brew install iTerm2-dimmer
+iTerm2-dimmer install
 ```
 
 ### iTerm2 Script Import
 
-Download `taskmaster_dim.its` and/or `toggle_taskmaster_dim.its` from the [releases page](https://github.com/hex/iterm2-dimmer/releases), then import via iTerm2 > Scripts > Import.
+Download `Taskmaster.its` and/or `Toggle Taskmaster.its` from the [releases page](https://github.com/hex/iTerm2-dimmer/releases), then import via iTerm2 > Scripts > Import.
 
 Note: `.its` imports only install the iTerm2 scripts. For the CLI tool, use one of the other install methods.
 
 ## Uninstall
 
 ```bash
-cd ~/GitHub/iterm2-dimmer
+cd ~/GitHub/iTerm2-dimmer
 ./uninstall.sh
 ```
 
 Or if installed via Homebrew:
 
 ```bash
-iterm2-dimmer uninstall
-brew uninstall iterm2-dimmer
+iTerm2-dimmer uninstall
+brew uninstall iTerm2-dimmer
 brew untap hex/tap
 ```
 

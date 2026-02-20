@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ABOUTME: Builds iTerm2 .its archives for script import.
-# ABOUTME: Creates taskmaster_dim.its (AutoLaunch) and toggle_taskmaster_dim.its (toggle).
+# ABOUTME: Creates Taskmaster.its (AutoLaunch) and Toggle Taskmaster.its (toggle).
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -17,22 +17,22 @@ strip_sys_path() {
 }
 
 # Build AutoLaunch .its
-echo "Building taskmaster_dim.its..."
-STAGE="$BUILD_DIR/taskmaster_dim"
+echo "Building Taskmaster.its..."
+STAGE="$BUILD_DIR/Taskmaster"
 mkdir -p "$STAGE"
-strip_sys_path "$SRC_DIR/scripts/taskmaster_dim.py" > "$STAGE/taskmaster_dim.py"
+strip_sys_path "$SRC_DIR/scripts/taskmaster_dim.py" > "$STAGE/Taskmaster.py"
 cp "$SRC_DIR/taskmaster_triggers.py" "$STAGE/"
-(cd "$BUILD_DIR" && zip -qr "$REPO_DIR/taskmaster_dim.its" taskmaster_dim/)
-echo "  Created taskmaster_dim.its"
+(cd "$BUILD_DIR" && zip -qr "$REPO_DIR/Taskmaster.its" Taskmaster/)
+echo "  Created Taskmaster.its"
 
 # Build toggle .its
-echo "Building toggle_taskmaster_dim.its..."
-STAGE="$BUILD_DIR/toggle_taskmaster_dim"
+echo "Building Toggle Taskmaster.its..."
+STAGE="$BUILD_DIR/Toggle Taskmaster"
 mkdir -p "$STAGE"
-strip_sys_path "$SRC_DIR/scripts/toggle_taskmaster_dim.py" > "$STAGE/toggle_taskmaster_dim.py"
+strip_sys_path "$SRC_DIR/scripts/toggle_taskmaster_dim.py" > "$STAGE/Toggle Taskmaster.py"
 cp "$SRC_DIR/taskmaster_triggers.py" "$STAGE/"
-(cd "$BUILD_DIR" && zip -qr "$REPO_DIR/toggle_taskmaster_dim.its" toggle_taskmaster_dim/)
-echo "  Created toggle_taskmaster_dim.its"
+(cd "$BUILD_DIR" && zip -qr "$REPO_DIR/Toggle Taskmaster.its" "Toggle Taskmaster/")
+echo "  Created Toggle Taskmaster.its"
 
 rm -rf "$BUILD_DIR"
 echo "Done."

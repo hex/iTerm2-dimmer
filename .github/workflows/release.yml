@@ -27,5 +27,5 @@ jobs:
           name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
           files: |
-            taskmaster_dim.its
-            toggle_taskmaster_dim.its
+            Taskmaster.its
+            Toggle Taskmaster.its

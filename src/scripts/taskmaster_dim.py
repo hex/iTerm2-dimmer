@@ -6,7 +6,7 @@ import sys
 import os
 import asyncio
 
-sys.path.insert(0, os.path.expanduser("~/.config/iterm2-dimmer"))
+sys.path.insert(0, os.path.expanduser("~/.config/iTerm2-dimmer"))
 
 import iterm2
 from taskmaster_triggers import apply_to_session

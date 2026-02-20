@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# ABOUTME: Removes iterm2-dimmer symlinks and optionally the venv.
+# ABOUTME: Removes iTerm2-dimmer symlinks and optionally the venv.
 # ABOUTME: Does not delete the repo itself.
 set -euo pipefail
 
-CONFIG_DIR="$HOME/.config/iterm2-dimmer"
+CONFIG_DIR="$HOME/.config/iTerm2-dimmer"
 SCRIPTS_DIR="$HOME/Library/Application Support/iTerm2/Scripts"
 AUTOLAUNCH_DIR="$SCRIPTS_DIR/AutoLaunch"
+SUBMENU_DIR="$SCRIPTS_DIR/iTerm2 Dimmer"
 
-echo "Uninstalling iterm2-dimmer"
+echo "Uninstalling iTerm2-dimmer"
 
 # Remove triggers from active sessions first
 if [ -x "$CONFIG_DIR/run.sh" ]; then
@@ -24,16 +25,22 @@ for f in taskmaster_triggers.py dimmer.py run.sh; do
     fi
 done
 
-target="$SCRIPTS_DIR/toggle_taskmaster_dim.py"
-if [ -L "$target" ]; then
-    rm "$target"
-    echo "  Removed $target"
-fi
+# Remove current symlinks
+for target in \
+    "$SUBMENU_DIR/Toggle Taskmaster.py" \
+    "$AUTOLAUNCH_DIR/Taskmaster.py" \
+    "$SCRIPTS_DIR/toggle_taskmaster_dim.py" \
+    "$AUTOLAUNCH_DIR/taskmaster_dim.py"; do
+    if [ -L "$target" ]; then
+        rm "$target"
+        echo "  Removed $target"
+    fi
+done
 
-target="$AUTOLAUNCH_DIR/taskmaster_dim.py"
-if [ -L "$target" ]; then
-    rm "$target"
-    echo "  Removed $target"
+# Remove submenu directory if empty
+if [ -d "$SUBMENU_DIR" ] && [ -z "$(ls -A "$SUBMENU_DIR")" ]; then
+    rmdir "$SUBMENU_DIR"
+    echo "  Removed empty $SUBMENU_DIR"
 fi
 
 # Ask about venv
