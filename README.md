@@ -88,3 +88,8 @@ The AutoLaunch daemon monitors three things concurrently:
 iTerm2 triggers match per screen line (after text wrapping), not per logical line. When the terminal window is resized, text reflows and a phrase like `"ACTUALLY DO IT"` can split so that `"IT."` lands on its own screen line with no matching trigger.
 
 The sub-phrase generator covers most wrap points, but very short orphan fragments (1-2 words) at narrow window widths may remain undimmed. This is an inherent limitation of iTerm2's trigger system, which has no "dim this block" mechanism.
+
+## See also
+
+- [TASKMASTER](https://github.com/blader/taskmaster) -- stop hook for Claude Code that keeps the agent working until all plans and user requests are complete
+- [claude-sessions](https://github.com/hex/claude-sessions) -- session manager for Claude Code whose discoveries hook output is also dimmed by this tool
