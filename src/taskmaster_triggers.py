@@ -59,6 +59,10 @@ PHRASES = [
     "whatever remains",
     "do not just describe",
     "ACTUALLY DO IT",
+    "working on it",
+    "partially done",
+    "Finish it",
+    "user redirected",
 ]
 
 REGEX_PATTERNS = [
@@ -88,14 +92,20 @@ def _tail_phrases(phrases, min_len=10):
 
 
 _SUB_PHRASES = _tail_phrases(PHRASES)
+_ALL_PHRASES = PHRASES + _SUB_PHRASES
 
-TRIGGER_REGEXES = ([make_null_safe(p) for p in PHRASES]
-                   + [make_null_safe(p) for p in _SUB_PHRASES]
-                   + REGEX_PATTERNS)
+# Single combined regex: all phrases + sub-phrases + regex patterns joined with |.
+# One trigger instead of 80, tested in a single pass per output line.
+TRIGGER_REGEX = "|".join(
+    [make_null_safe(p) for p in _ALL_PHRASES] + REGEX_PATTERNS
+)
+TRIGGER_REGEXES = [TRIGGER_REGEX]
 
-# For removal, match both plain and null-safe variants from any version
-ALL_PATTERNS = (set(PHRASES) | set(_SUB_PHRASES)
-                | set(TRIGGER_REGEXES) | set(REGEX_PATTERNS))
+# For removal, match the combined regex AND individual patterns from older versions
+ALL_PATTERNS = (set(_ALL_PHRASES)
+                | {make_null_safe(p) for p in _ALL_PHRASES}
+                | set(REGEX_PATTERNS)
+                | set(TRIGGER_REGEXES))
 
 # How far from background toward foreground (0.0 = invisible, 1.0 = full brightness).
 DIM_FACTOR = 0.25
