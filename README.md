@@ -1,20 +1,22 @@
 # iTerm2-dimmer
 
-Dims [TASKMASTER](https://github.com/blader/taskmaster) stop hook output in iTerm2 using phrase-based HighlightLine triggers. The dim color is computed dynamically from each session's profile colors, so it works with any color scheme and adapts to profile switches and dark/light mode changes.
+Dims noisy terminal output in iTerm2 using phrase-based HighlightLine triggers. The dim color is computed dynamically from each session's profile colors, so it works with any color scheme and adapts to profile switches and dark/light mode changes.
+
+Currently ships with support for [TASKMASTER](https://github.com/blader/taskmaster), which prints a multi-line checklist every time a Claude Code agent tries to stop. Useful for the agent, noisy for humans.
 
 ![TASKMASTER output dimmed in iTerm2](assets/screenshot.png)
 
 ## What it does
 
-TASKMASTER's stop hook prints a multi-line checklist every time a Claude Code agent tries to stop. This is useful for the agent but noisy for humans. iTerm2-dimmer makes that output nearly invisible by coloring it close to your terminal's background color.
-
-The dimmer installs iTerm2 triggers (HighlightLine rules) on each session that match short phrases from the stop hook output. Triggers are session-local and don't modify your saved profiles.
+iTerm2-dimmer makes matched output nearly invisible by coloring it close to your terminal's background color. It installs iTerm2 triggers (HighlightLine rules) on each session that match short phrases from the target output. Triggers are session-local and don't modify your saved profiles.
 
 ## Components
 
 - **AutoLaunch daemon** -- starts with iTerm2, applies triggers to all sessions, watches for new sessions, profile changes, and OS theme changes
 - **Toggle script** -- appears in iTerm2's Scripts > iTerm2 Dimmer menu, toggles dimming on/off with a confirmation alert
 - **CLI tool** -- `run.sh on|off|daemon` for scripted control
+
+![Scripts menu location](assets/menu.png)
 
 ## Install
 
@@ -60,7 +62,7 @@ brew untap hex/tap
 Edit `src/taskmaster_triggers.py` to adjust:
 
 - **`DIM_FACTOR`** (default `0.25`) -- how visible the dimmed text is. `0.0` = invisible, `1.0` = full brightness.
-- **`PHRASES`** -- the list of text fragments to match. Short, wrap-resistant fragments work best.
+- **`PHRASES`** -- the list of text fragments to match. Add your own phrases to dim other noisy output. Short, wrap-resistant fragments work best.
 
 After editing, run `run.sh off && run.sh on` (or restart iTerm2) to reapply.
 
