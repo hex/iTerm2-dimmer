@@ -2,6 +2,8 @@
 
 Dims [TASKMASTER](https://github.com/blader/taskmaster) stop hook output in iTerm2 using phrase-based HighlightLine triggers. The dim color is computed dynamically from each session's profile colors, so it works with any color scheme and adapts to profile switches and dark/light mode changes.
 
+![TASKMASTER output dimmed in iTerm2](assets/screenshot.png)
+
 ## What it does
 
 TASKMASTER's stop hook prints a multi-line checklist every time a Claude Code agent tries to stop. This is useful for the agent but noisy for humans. iterm2-dimmer makes that output nearly invisible by coloring it close to your terminal's background color.
