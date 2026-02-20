@@ -72,10 +72,30 @@ def make_null_safe(phrase):
     return phrase.replace(" ", "[\\x00 ]")
 
 
-TRIGGER_REGEXES = [make_null_safe(p) for p in PHRASES] + REGEX_PATTERNS
+def _tail_phrases(phrases, min_len=10):
+    """For 3+ word phrases, generate all 2+ word tails at least min_len chars.
+    When iTerm2 reflows text on resize, a phrase like "no longer wanted" can
+    split so "longer wanted" lands on its own screen line with no matching
+    trigger. These tails cover those fragments."""
+    subs = set()
+    for p in phrases:
+        words = p.split()
+        for i in range(1, len(words) - 1):
+            tail = " ".join(words[i:])
+            if len(tail) >= min_len:
+                subs.add(tail)
+    return sorted(subs - set(phrases))
 
-# For removal, match both old exact phrases and new null-safe patterns
-ALL_PATTERNS = set(PHRASES) | set(TRIGGER_REGEXES) | set(REGEX_PATTERNS)
+
+_SUB_PHRASES = _tail_phrases(PHRASES)
+
+TRIGGER_REGEXES = ([make_null_safe(p) for p in PHRASES]
+                   + [make_null_safe(p) for p in _SUB_PHRASES]
+                   + REGEX_PATTERNS)
+
+# For removal, match both plain and null-safe variants from any version
+ALL_PATTERNS = (set(PHRASES) | set(_SUB_PHRASES)
+                | set(TRIGGER_REGEXES) | set(REGEX_PATTERNS))
 
 # How far from background toward foreground (0.0 = invisible, 1.0 = full brightness).
 DIM_FACTOR = 0.25
