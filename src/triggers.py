@@ -84,6 +84,7 @@ DIMMERS = {
             "compact discoveries",
         ],
         "regex_patterns": [],
+        "dim_toward": (255, 160, 0),  # orange
     },
 }
 
@@ -150,16 +151,24 @@ DIM_FACTOR = 0.25
 FALLBACK_DIM_PARAM = "{#555555,}"
 
 
-def compute_dim_param(profile):
-    """Derive a dim text color by interpolating from bg toward fg."""
+def compute_dim_param(profile, dim_toward=None):
+    """Derive a dim text color by interpolating from bg toward a target color.
+    If dim_toward is None, interpolates toward the profile's foreground color.
+    If dim_toward is an (r, g, b) tuple, interpolates toward that color instead."""
     try:
         bg = profile.background_color
-        fg = profile.foreground_color
-        if bg is None or fg is None:
+        if bg is None:
             return FALLBACK_DIM_PARAM
-        r = max(0, min(255, int(round(bg.red + (fg.red - bg.red) * DIM_FACTOR))))
-        g = max(0, min(255, int(round(bg.green + (fg.green - bg.green) * DIM_FACTOR))))
-        b = max(0, min(255, int(round(bg.blue + (fg.blue - bg.blue) * DIM_FACTOR))))
+        if dim_toward is not None:
+            tr, tg, tb = dim_toward
+        else:
+            fg = profile.foreground_color
+            if fg is None:
+                return FALLBACK_DIM_PARAM
+            tr, tg, tb = fg.red, fg.green, fg.blue
+        r = max(0, min(255, int(round(bg.red + (tr - bg.red) * DIM_FACTOR))))
+        g = max(0, min(255, int(round(bg.green + (tg - bg.green) * DIM_FACTOR))))
+        b = max(0, min(255, int(round(bg.blue + (tb - bg.blue) * DIM_FACTOR))))
         return "{" + f"#{r:02x}{g:02x}{b:02x}" + ",}"
     except (AttributeError, KeyError, TypeError):
         return FALLBACK_DIM_PARAM
@@ -179,7 +188,8 @@ def has_dimmer(profile, dimmer_name):
 async def apply_dimmer(session, dimmer_name):
     """Install one dimmer's trigger, replacing any stale triggers."""
     profile = await session.async_get_profile()
-    dim_param = compute_dim_param(profile)
+    dim_toward = DIMMERS[dimmer_name].get("dim_toward")
+    dim_param = compute_dim_param(profile, dim_toward)
     regex = DIMMER_REGEXES[dimmer_name]
 
     # Remove stale triggers but keep other dimmers' triggers and user triggers
@@ -227,13 +237,12 @@ async def apply_to_session(session):
     Returns the number of triggers added."""
     profile = await session.async_get_profile()
     existing = profile.triggers or []
-    dim_param = compute_dim_param(profile)
 
     kept = [t for t in existing if t.get("regex") not in ALL_PATTERNS]
     new_triggers = [{
         "regex": DIMMER_REGEXES[name],
         "action": "iTermHighlightLineTrigger",
-        "parameter": dim_param,
+        "parameter": compute_dim_param(profile, DIMMERS[name].get("dim_toward")),
         "partial": True,
         "disabled": False,
     } for name in DIMMERS]
