@@ -1,4 +1,4 @@
-# iterm2-dimmer
+# iTerm2-dimmer
 
 Dims [TASKMASTER](https://github.com/blader/taskmaster) stop hook output in iTerm2 using phrase-based HighlightLine triggers. The dim color is computed dynamically from each session's profile colors, so it works with any color scheme and adapts to profile switches and dark/light mode changes.
 
