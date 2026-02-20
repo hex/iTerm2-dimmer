@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 *.its
 .DS_Store
+.cs/
