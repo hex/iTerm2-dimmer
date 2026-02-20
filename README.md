@@ -28,7 +28,7 @@ cd ~/GitHub/iterm2-dimmer
 
 ```bash
 brew tap hex/tap
-brew install --head iterm2-dimmer
+brew install iterm2-dimmer
 iterm2-dimmer install
 ```
 
