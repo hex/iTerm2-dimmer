@@ -2,5 +2,7 @@
 __pycache__/
 *.pyc
 *.its
+build/
+tools/
 .DS_Store
 .cs/
