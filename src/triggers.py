@@ -95,7 +95,7 @@ def make_null_safe(phrase):
     return re.escape(phrase).replace(r"\ ", "[\\x00 ]")
 
 
-def _tail_phrases(phrases, min_len=10):
+def _tail_phrases(phrases, min_len=15):
     """For 3+ word phrases, generate all 2+ word tails at least min_len chars.
     When iTerm2 reflows text on resize, a phrase like "no longer wanted" can
     split so "longer wanted" lands on its own screen line with no matching
@@ -110,15 +110,70 @@ def _tail_phrases(phrases, min_len=10):
     return sorted(subs - set(phrases))
 
 
+def _build_trie(word_lists):
+    """Build a prefix trie from lists of regex-escaped words."""
+    root = {}
+    for words in word_lists:
+        node = root
+        for word in words:
+            node = node.setdefault(word, {})
+        node[None] = True
+    return root
+
+
+def _trie_to_regex(node, is_root=False):
+    """Convert a prefix trie to a compact alternation regex.
+
+    Shared prefixes are factored out so the regex engine rejects non-matching
+    input after checking one word instead of trying every alternative.
+    Words are joined with [\\x00 ] to match both null bytes and spaces."""
+    SEP = "[\\x00 ]"
+    children = {k: v for k, v in node.items() if k is not None}
+    has_end = None in node
+
+    if not children:
+        return ""
+
+    branches = []
+    for word in sorted(children):
+        suffix = _trie_to_regex(children[word])
+        branches.append(word + suffix)
+
+    if is_root:
+        return "|".join(branches)
+
+    if len(branches) == 1:
+        inner = branches[0]
+    else:
+        inner = "(?:" + "|".join(branches) + ")"
+
+    if has_end:
+        return "(?:" + SEP + inner + ")?"
+    return SEP + inner
+
+
 def build_trigger_regex(dimmer_name):
-    """Build a combined regex string for one dimmer's phrases and patterns."""
+    """Build a combined regex string for one dimmer's phrases and patterns.
+
+    Phrases are organized into a prefix trie so the resulting alternation
+    shares common prefixes, reducing the work the regex engine does per line."""
     config = DIMMERS[dimmer_name]
     phrases = config["phrases"]
     sub_phrases = _tail_phrases(phrases)
     all_phrases = phrases + sub_phrases
-    return "|".join(
-        [make_null_safe(p) for p in all_phrases] + config["regex_patterns"]
-    )
+
+    word_lists = []
+    for phrase in all_phrases:
+        words = phrase.split()
+        word_lists.append([re.escape(w) for w in words])
+
+    trie = _build_trie(word_lists)
+    trie_regex = _trie_to_regex(trie, is_root=True)
+
+    regex_patterns = config.get("regex_patterns", [])
+    if regex_patterns:
+        return trie_regex + "|" + "|".join(regex_patterns)
+    return trie_regex
 
 
 # Pre-built per-dimmer regexes (one trigger per dimmer).

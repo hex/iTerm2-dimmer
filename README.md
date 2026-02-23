@@ -76,9 +76,9 @@ After editing, run `run.sh off && run.sh on` (or restart iTerm2) to reapply.
 
 ## How it works
 
-Each dimmer's phrases are converted to null-safe regexes (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and combined into one iTerm2 HighlightLine trigger per dimmer using `|` alternation. The trigger's text color is interpolated between the session's background and foreground colors at `DIM_FACTOR`, making the text blend into the background.
+Each dimmer's phrases are converted to null-safe regexes (spaces become `[\x00 ]` to match Claude Code's TUI rendering) and organized into a prefix trie, producing a compact alternation with shared prefixes factored out. This lets the regex engine reject non-matching lines after checking one word instead of trying every alternative. The trigger's text color is interpolated between the session's background and foreground colors at `DIM_FACTOR`, making the text blend into the background.
 
-Longer phrases (3+ words) automatically generate shorter sub-phrases to handle line-wrapping. For example, `"no longer wanted"` also generates `"longer wanted"` so the text stays dimmed even if it wraps mid-phrase.
+Longer phrases (3+ words) automatically generate sub-phrases (15+ characters) to handle line-wrapping. For example, `"do each of these checks"` also generates `"each of these checks"` so the text stays dimmed even if it wraps mid-phrase.
 
 The AutoLaunch daemon monitors three things concurrently:
 - **New sessions** -- applies triggers immediately
