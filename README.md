@@ -35,7 +35,6 @@ cd ~/GitHub/iTerm2-dimmer
 ```bash
 brew tap hex/tap
 brew install iTerm2-dimmer
-iTerm2-dimmer install
 ```
 
 ### iTerm2 Script Import
