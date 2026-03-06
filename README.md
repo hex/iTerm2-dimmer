@@ -3,7 +3,7 @@
 Dims noisy terminal output in iTerm2 using phrase-based HighlightLine triggers. The dim color is computed dynamically from each session's profile colors, so it works with any color scheme and adapts to profile switches and dark/light mode changes.
 
 Currently dims output from:
-- [TASKMASTER](https://github.com/blader/taskmaster) -- stop hook that prints a multi-line checklist every time a Claude Code agent tries to stop
+- [claude-taskmaster](https://github.com/hex/claude-taskmaster) -- stop hook that prints a multi-line checklist every time a Claude Code agent tries to stop
 - [claude-sessions](https://github.com/hex/claude-sessions) -- discoveries reminder hook that prompts the agent to update session notes
 
 ![TASKMASTER output dimmed in iTerm2](assets/screenshot.png)
@@ -92,5 +92,5 @@ The sub-phrase generator covers most wrap points, but very short orphan fragment
 
 ## See also
 
-- [TASKMASTER](https://github.com/blader/taskmaster) -- stop hook for Claude Code that keeps the agent working until all plans and user requests are complete
+- [claude-taskmaster](https://github.com/hex/claude-taskmaster) -- stop hook for Claude Code that keeps the agent working until all plans and user requests are complete
 - [claude-sessions](https://github.com/hex/claude-sessions) -- session manager for Claude Code whose discoveries hook output is also dimmed by this tool
