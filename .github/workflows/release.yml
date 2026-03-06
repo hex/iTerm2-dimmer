@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - '[0-9]*'
 
 permissions:
   contents: write
@@ -14,12 +14,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract version from tag
-        id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          name: v${{ steps.version.outputs.version }}
+          name: ${{ github.ref_name }}
           generate_release_notes: true
+
+  update-homebrew:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Homebrew formula
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          TARBALL="https://github.com/hex/iterm2-dimmer/archive/refs/tags/${VERSION}.tar.gz"
+          SHA256=$(curl -sL "$TARBALL" | sha256sum | cut -d' ' -f1)
+
+          gh repo clone hex/homebrew-tap /tmp/tap
+          cd /tmp/tap
+
+          sed -i "s/version \".*\"/version \"${VERSION}\"/" Formula/iterm2-dimmer.rb
+          sed -i "s|url \".*\"|url \"${TARBALL}\"|" Formula/iterm2-dimmer.rb
+          sed -i "s/sha256 \".*\"/sha256 \"${SHA256}\"/" Formula/iterm2-dimmer.rb
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/iterm2-dimmer.rb
+          git commit -m "iterm2-dimmer: update to ${VERSION}"
+          git push
